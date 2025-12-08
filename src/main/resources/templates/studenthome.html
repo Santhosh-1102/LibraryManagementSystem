@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Home</title>
+</head>
+<body>
+    <h1>Welcome, Student!</h1>
+    <p>You have successfully logged in.</p>
+
+    <!-- Example: Access logged-in student -->
+    <p th:text="'Hello, ' + ${student.username} + '!'"></p>
+
+    <a href="/student/getbooks">View Books</a>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Library Management</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #4361ee;
+        --secondary: #3f37c9;
+        --success: #4cc9f0;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --danger: #e63946;
+        --warning: #fca311;
+      }
+
+      body {
+        font-family: 'Montserrat', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        padding-bottom: 2rem;
+      }
+
+      .navbar-brand {
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+
+      .card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      .available {
+        border-left: 5px solid var(--success);
+      }
+
+      .unavailable {
+        border-left: 5px solid var(--danger);
+      }
+
+      .status-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 0.8rem;
+        padding: 5px 10px;
+        border-radius: 20px;
+      }
+
+      .btn-action {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        font-weight: 500;
+      }
+
+      .btn-action:hover {
+        transform: scale(1.05);
+      }
+
+      .page-title {
+        position: relative;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+      }
+
+      .page-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+
+      .search-container {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .book-card {
+        animation: fadeIn 0.6s ease forwards;
+        opacity: 0;
+      }
+
+      .book-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .book-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .book-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .book-card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .book-card:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      .book-card:nth-child(6) {
+        animation-delay: 0.6s;
+      }
+
+      .floating-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0 5px 20px rgba(67, 97, 238, 0.5);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        text-decoration: none;
+      }
+
+      .floating-btn:hover {
+        transform: scale(1.1) rotate(90deg);
+        color: white;
+        background: var(--secondary);
+      }
+
+      .modal-content {
+        border-radius: 15px;
+        border: none;
+      }
+
+      .form-control,
+      .form-select {
+        border-radius: 8px;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+      }
+
+      .alert-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+        animation: slideIn 0.5s ease forwards;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Notification Alert -->
+    <div
+      th:if="${message}"
+      class="alert alert-success alert-dismissible fade show alert-notification"
+      role="alert"
+    >
+      <span th:text="${message}">Operation successful</span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#"> <i class="fas fa-book-open me-2"></i>BookLibrary </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Collections</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Reports</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Settings</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h1 class="page-title">Book Library Management</h1>
+
+      <!-- Search and Filter Section -->
+      <div class="search-container">
+        <div class="row">
+          <div class="col-md-8">
+            <form th:action="@{/books}" method="get">
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0">
+                  <i class="fas fa-search"></i>
+                </span>
+                <input
+                  type="text"
+                  class="form-control border-start-0"
+                  name="keyword"
+                  th:value="${keyword}"
+                  placeholder="Search by title, author, or ISBN..."
+                />
+                <button type="submit" class="btn btn-primary">Search</button>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-4">
+            <form th:action="@{/books}" method="get">
+              <select class="form-select" name="availability" onchange="this.form.submit()">
+                <option value="">All Books</option>
+                <option value="available" th:selected="${availability} == 'available'">
+                  Available Books
+                </option>
+                <option value="borrowed" th:selected="${availability} == 'borrowed'">
+                  Borrowed Books
+                </option>
+              </select>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Books Grid -->
+      <div class="row" id="booksContainer">
+        <!-- Book Cards -->
+        <div class="col-lg-4 col-md-6 mb-4 book-card" th:each="book : ${books}">
+          <div class="card h-100" th:classappend="${book.available} ? 'available' : 'unavailable'">
+            <span
+              class="status-badge"
+              th:class="${book.available} ? 'bg-success' : 'bg-danger'"
+              th:text="${book.available} ? 'Available' : 'Borrowed'"
+            ></span>
+            <div class="card-body">
+              <h5 class="card-title" th:text="${book.title}">Book Title</h5>
+              <h6 class="card-subtitle mb-3 text-muted" th:text="${book.author}">Author Name</h6>
+              <div class="book-details mb-3">
+                <p class="mb-1">
+                  <strong>ISBN:</strong> <span th:text="${book.isbn}">1234567890</span>
+                </p>
+                <p class="mb-1"><strong>ID:</strong> <span th:text="${book.id}">1001</span></p>
+              </div>
+              <div class="d-flex justify-content-between">
+
+                <!-- Delete Form -->
+                <form
+                  th:action="@{/admin/books/deletebook/{id}(id=${book.id})}"
+                  class="d-inline"
+                >
+                  <input type="hidden" name="_method" value="delete" />
+                  <button type="submit" class="btn btn-action btn-danger">
+                    <i class="fas fa-trash me-1"></i> Delete
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- Add Book Button -->
+    <a th:href="@{/books/add}" class="floating-btn">
+      <i class="fas fa-plus"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Simple animation for cards when they come into view
+      document.addEventListener('DOMContentLoaded', function () {
+        const cards = document.querySelectorAll('.book-card');
+
+        cards.forEach((card) => {
+          // Simulate loading data
+          setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, 300);
+        });
+
+        // Auto-hide notification after 5 seconds
+        const alert = document.querySelector('.alert');
+        if (alert) {
+          setTimeout(() => {
+            alert.classList.remove('show');
+            alert.classList.add('fade');
+          }, 5000);
+        }
+      });
+    </script>
+  </body>
+</html>

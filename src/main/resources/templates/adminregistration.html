@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #6f42c1;
+            --light-color: #f8f9fc;
+            --dark-color: #5a5c69;
+            --student-color: #1cc88a; /* New color for student elements */
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .registration-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            border-bottom: none;
+        }
+        
+        .card-header h3 {
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .input-container {
+            position: relative;
+        }
+        
+        .form-control {
+            padding: 12px 15px 12px 40px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.15);
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-color);
+            z-index: 2;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .btn-register {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(78, 115, 223, 0.4);
+        }
+        
+        /* Student registration button */
+        .btn-student-register {
+            background: linear-gradient(135deg, var(--student-color) 0%, #17a673 100%);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+        
+        .btn-student-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(28, 200, 138, 0.4);
+            color: white;
+        }
+        
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--dark-color);
+        }
+        
+        .login-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--dark-color);
+            z-index: 2;
+        }
+        
+        .terms {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--dark-color);
+            text-align: center;
+        }
+        
+        .form-field {
+            margin-bottom: 20px;
+        }
+        
+        /* Divider style */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: var(--dark-color);
+            font-size: 14px;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: #e0e0e0;
+        }
+        
+        .divider::before {
+            margin-right: 10px;
+        }
+        
+        .divider::after {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="registration-card">
+        <div class="card-header">
+            <h3><i class="fas fa-user-shield me-2"></i>Admin Registration</h3>
+        </div>
+        <div class="card-body">
+            <!-- Success Message (Thymeleaf) -->
+            <div th:if="${success}" class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>
+                <span>Registration successful! You can now login.</span>
+            </div>
+            
+            <form th:action="@{/admin/registerafter}" th:object="${adminBinding}" method="post">
+                <div class="form-field">
+                    <label for="username">Username</label>
+                    <div class="input-container">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" class="form-control" id="username" th:field="*{username}" 
+                               placeholder="Enter your username">
+                    </div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="password">Password</label>
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-control" id="password" th:field="*{password}" 
+                               placeholder="Create a password">
+                        <span class="password-toggle" onclick="togglePassword()">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="number">Phone Number</label>
+                    <div class="input-container">
+                        <i class="fas fa-phone input-icon"></i>
+                        <input type="tel" class="form-control" id="number" th:field="*{number}" 
+                               placeholder="Enter your phone number">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-register mt-3">
+                    <i class="fas fa-user-plus me-2"></i>Register as Admin
+                </button>
+            </form>
+            
+            <!-- Divider and Student Registration Button -->
+            <div class="divider">Or register as</div>
+            
+            <a th:href="@{/student/sturegister}" class="btn-student-register">
+                <i class="fas fa-user-graduate me-2"></i>Student Registration
+            </a>
+            
+            <div class="login-link">
+                Already have an account? <a  th:href="@{/admin/adminLogin}">Login here</a>
+            </div>
+            
+            <div class="terms">
+                By registering, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const toggleIcon = document.querySelector('.password-toggle i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

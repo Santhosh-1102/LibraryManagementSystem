@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --danger: #e63946;
+            --warning: #fca311;
+            --info: #4895ef;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.8rem 2rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.8rem;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-link i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+
+        .nav-link.logout {
+            background-color: var(--danger);
+        }
+
+        .nav-link.logout:hover {
+            background-color: #d90429;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.2rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-icon {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+        }
+
+        .card-text {
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 1.2rem;
+        }
+
+        .card-btn {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .card-btn:hover {
+            background-color: var(--secondary);
+        }
+
+        /* Card Colors */
+        .card:nth-child(1) .card-icon { background: linear-gradient(45deg, #4361ee, #4cc9f0); }
+        .card:nth-child(2) .card-icon { background: linear-gradient(45deg, #fca311, #ffb703); }
+        .card:nth-child(3) .card-icon { background: linear-gradient(45deg, #e63946, #f72585); }
+        .card:nth-child(4) .card-icon { background: linear-gradient(45deg, #4895ef, #560bad); }
+        .card:nth-child(5) .card-icon { background: linear-gradient(45deg, #7209b7, #b5179e); }
+        .card:nth-child(6) .card-icon { background: linear-gradient(45deg, #3a0ca3, #4361ee); }
+        .card:nth-child(7) .card-icon { background: linear-gradient(45deg, #e63946, #f72585); }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            .navbar-nav {
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .nav-item {
+                margin-left: 0;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-book-open"></i>
+            <span>LibraryAdmin</span>
+        </div>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Welcome <span th:text="${session.admin.username}"> Admin</span> </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+			<li class="nav-item">
+			        <!-- ✅ Logout link -->
+			        <a class="nav-link text-danger fw-bold" th:href="@{/admin/logout}">Logout</a>
+			      </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Library Management Dashboard</h1>
+            <p>Manage books, students, and track borrowed items from one place</p>
+        </div>
+
+        <div class="cards-grid">
+            <!-- Add Book Card -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Add Book</h3>
+                    <p class="card-text">Add new books to the library collection with details like title, author, ISBN, and category.</p>
+                    <a th:href="@{/admin/books/addbooks}" class="card-btn">Add New</a>
+                </div>
+            </div>
+
+            <!-- Update Book Card -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Update Book</h3>
+                    <p class="card-text">Modify existing book information, update availability status, or edit book details.</p>
+                    <a href="#" class="card-btn">Update</a>
+                </div>
+            </div>
+
+            <!-- Delete Book Card -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Delete Book</h3>
+                    <p class="card-text">Remove books from the library collection. This action requires confirmation.</p>
+                    <a href="#" class="card-btn">Delete</a>
+                </div>
+            </div>
+
+            <!-- View Books Card -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">View Books</h3>
+                    <p class="card-text">Browse the complete library catalog, search for books, and check availability status.</p>
+                    <a method="get" th:href="@{/admin/books/fetchallbooks}" class="card-btn">View All</a>
+                </div>
+            </div>
+
+            <!-- View Students Card -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">View Students</h3>
+                    <p class="card-text">Access the list of registered students, their details, and borrowing history.</p>
+                    <a th:href="@{/admin/fetchstudents}" class="card-btn">View Students</a>
+                </div>
+            </div>
+
+            <!-- Borrowed Books Card -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Borrowed Books</h3>
+                    <p class="card-text">Track all currently borrowed books, due dates, and manage returns.</p>
+                    <a href="#" class="card-btn">Check Records</a>
+                </div>
+            </div>
+
+            <!-- Logout Card -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Logout</h3>
+                    <p class="card-text">Securely log out from the admin dashboard. You'll need to login again to access the system.</p>
+                    <a href="#" class="card-btn">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2023 Library Management System | Admin Dashboard</p>
+    </footer>
+
+    <script>
+        // Simple animation for cards on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = 1;
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        });
+
+        // Initially hide cards for animation
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        });
+    </script>
+</body>
+</html>
