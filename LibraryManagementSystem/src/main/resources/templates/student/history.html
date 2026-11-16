@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Borrow History - LibraryHub')}"></head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Your Loan History</h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Audit log of all your active and returned books</p>
+            </div>
+            <a href="/student/dashboard" class="px-4 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-bold transition">
+                &larr; Back to Dashboard
+            </a>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600">
+                    <thead class="bg-slate-50 text-[11px] uppercase font-bold text-slate-400 tracking-wider border-b border-slate-100">
+                        <tr>
+                            <th class="px-6 py-4">Book Title &amp; Details</th>
+                            <th class="px-6 py-4">ISBN</th>
+                            <th class="px-6 py-4">Borrow Date</th>
+                            <th class="px-6 py-4">Due Date</th>
+                            <th class="px-6 py-4">Return Date</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr th:each="record : ${borrowRecords}" class="hover:bg-slate-50/80 transition">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-14 rounded-lg bg-slate-100 flex-shrink-0 overflow-hidden shadow-xs">
+                                        <img th:if="${record.book.coverImageUrl != null and !record.book.coverImageUrl.isEmpty()}" th:src="${record.book.coverImageUrl}" class="w-full h-full object-cover">
+                                        <div th:unless="${record.book.coverImageUrl != null and !record.book.coverImageUrl.isEmpty()}" class="w-full h-full flex items-center justify-center text-slate-400 text-xs">
+                                            <i class="fa-solid fa-book"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-slate-900 text-xs sm:text-sm" th:text="${record.book.title}">Book Title</div>
+                                        <div class="text-[11px] text-slate-400" th:text="${record.book.author}">Author</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 font-mono text-xs text-slate-500" th:text="${record.book.isbn}">ISBN</td>
+                            <td class="px-6 py-4 text-xs" th:text="${#temporals.format(record.borrowDate, 'dd MMM yyyy, HH:mm')}">Date</td>
+                            <td class="px-6 py-4 text-xs font-semibold" th:classappend="${record.isOverdue() ? 'text-rose-600' : 'text-slate-700'}" th:text="${record.dueDate}">Due Date</td>
+                            <td class="px-6 py-4 text-xs text-slate-500">
+                                <span th:if="${record.returnDate != null}" th:text="${#temporals.format(record.returnDate, 'dd MMM yyyy, HH:mm')}">Date</span>
+                                <span th:unless="${record.returnDate != null}" class="text-slate-400 italic">Not Returned</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span th:if="${record.status.name() == 'ACTIVE' and !record.isOverdue()}" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                    Active Loan
+                                </span>
+                                <span th:if="${record.status.name() == 'ACTIVE' and record.isOverdue()}" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 animate-pulse">
+                                    Overdue Loan
+                                </span>
+                                <span th:if="${record.status.name() == 'RETURNED'}" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    Returned
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <form th:if="${record.status.name() == 'ACTIVE'}" th:action="@{'/student/return/' + ${record.id}}" method="post">
+                                    <button type="submit" class="px-3 py-1 bg-brand-50 hover:bg-emerald-600 hover:text-white text-brand-700 rounded-lg text-xs font-bold transition">
+                                        Return
+                                    </button>
+                                </form>
+                                <span th:unless="${record.status.name() == 'ACTIVE'}" class="text-slate-400 text-xs">
+                                    <i class="fa-solid fa-check text-emerald-500"></i>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty Table -->
+            <div th:unless="${borrowRecords != null and !borrowRecords.isEmpty()}" class="p-12 text-center text-slate-400">
+                <i class="fa-solid fa-clock-rotate-left text-4xl mb-3"></i>
+                <p class="text-sm">You haven't borrowed any books yet.</p>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

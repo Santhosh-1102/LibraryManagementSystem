@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Admin Command Center - LibraryHub')}"></head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+        <!-- Top Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div>
+                <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">Administration Console</span>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mt-2">Executive Overview</h1>
+                <p class="text-slate-500 text-sm">Real-time metrics, inventory analytics, and circulating loans</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/admin/books/add" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs shadow-md shadow-brand-500/20 transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Add New Book</span>
+                </a>
+                <a href="/admin/books" class="px-4 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold rounded-xl text-xs transition">
+                    Inventory
+                </a>
+            </div>
+        </div>
+
+        <!-- 5 Stat Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+            <!-- Card 1 -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-400 mb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider">Book Titles</span>
+                    <i class="fa-solid fa-book text-brand-600"></i>
+                </div>
+                <div>
+                    <span class="text-3xl font-extrabold text-slate-900" th:text="${stats.totalBooks}">10</span>
+                    <span class="block text-[11px] text-slate-500 mt-1 font-medium">Distinct catalog entries</span>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-400 mb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider">Total Copies</span>
+                    <i class="fa-solid fa-layer-group text-indigo-600"></i>
+                </div>
+                <div>
+                    <span class="text-3xl font-extrabold text-slate-900" th:text="${stats.totalCopies}">60</span>
+                    <span class="block text-[11px] text-slate-500 mt-1 font-medium">Volumes in circulation</span>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-400 mb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider">Active Loans</span>
+                    <i class="fa-solid fa-hand-holding-hand text-blue-600"></i>
+                </div>
+                <div>
+                    <span class="text-3xl font-extrabold text-blue-600" th:text="${stats.activeBorrows}">1</span>
+                    <span class="block text-[11px] text-slate-500 mt-1 font-medium">Currently with readers</span>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-400 mb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider">Overdue</span>
+                    <i class="fa-solid fa-triangle-exclamation text-rose-600"></i>
+                </div>
+                <div>
+                    <span class="text-3xl font-extrabold text-rose-600" th:text="${stats.overdueBorrows}">0</span>
+                    <span class="block text-[11px] text-slate-500 mt-1 font-medium">Past 14-day limit</span>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between col-span-2 lg:col-span-1">
+                <div class="flex items-center justify-between text-slate-400 mb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider">Students</span>
+                    <i class="fa-solid fa-users text-amber-600"></i>
+                </div>
+                <div>
+                    <span class="text-3xl font-extrabold text-slate-900" th:text="${stats.totalStudents}">3</span>
+                    <span class="block text-[11px] text-slate-500 mt-1 font-medium">Registered members</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+            <!-- Doughnut Chart: Category Distribution -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs">
+                <h3 class="font-bold text-slate-900 text-sm mb-4 flex items-center justify-between">
+                    <span>Category Distribution</span>
+                    <i class="fa-solid fa-chart-pie text-slate-400"></i>
+                </h3>
+                <div class="h-64 relative flex items-center justify-center">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Bar Chart: Inventory vs Circulation -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs lg:col-span-2">
+                <h3 class="font-bold text-slate-900 text-sm mb-4 flex items-center justify-between">
+                    <span>Repository Circulation Status</span>
+                    <i class="fa-solid fa-chart-simple text-slate-400"></i>
+                </h3>
+                <div class="h-64">
+                    <canvas id="circulationChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Table -->
+        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-slate-900 text-base">Recent Loan Activities</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Latest 10 borrowing transactions across all student accounts</p>
+                </div>
+                <a href="/admin/borrows" class="text-xs font-bold text-brand-600 hover:underline">View All &rarr;</a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600">
+                    <thead class="bg-slate-50 text-[11px] uppercase font-bold text-slate-400 tracking-wider">
+                        <tr>
+                            <th class="px-6 py-4">Student</th>
+                            <th class="px-6 py-4">Book Title</th>
+                            <th class="px-6 py-4">Borrow Date</th>
+                            <th class="px-6 py-4">Due Date</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr th:each="borrow : ${recentBorrows}" class="hover:bg-slate-50/70 transition">
+                            <td class="px-6 py-4 font-semibold text-slate-900 text-xs sm:text-sm">
+                                <div th:text="${borrow.user.fullName}">Student Name</div>
+                                <div class="text-[10px] text-slate-400 font-mono" th:text="${borrow.user.username}">STU001</div>
+                            </td>
+                            <td class="px-6 py-4 text-xs font-medium text-slate-800" th:text="${borrow.book.title}">Book Title</td>
+                            <td class="px-6 py-4 text-xs text-slate-500" th:text="${#temporals.format(borrow.borrowDate, 'dd MMM yyyy')}">Date</td>
+                            <td class="px-6 py-4 text-xs font-bold" th:classappend="${borrow.isOverdue() ? 'text-rose-600' : 'text-slate-700'}" th:text="${borrow.dueDate}">Date</td>
+                            <td class="px-6 py-4">
+                                <span th:if="${borrow.status.name() == 'ACTIVE' and !borrow.isOverdue()}" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                    Active
+                                </span>
+                                <span th:if="${borrow.status.name() == 'ACTIVE' and borrow.isOverdue()}" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                    Overdue
+                                </span>
+                                <span th:if="${borrow.status.name() == 'RETURNED'}" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    Returned
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <form th:if="${borrow.status.name() == 'ACTIVE'}" th:action="@{'/admin/borrows/return/' + ${borrow.id}}" method="post">
+                                    <button type="submit" class="px-3 py-1 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 rounded-lg text-xs font-bold transition">
+                                        Mark Returned
+                                    </button>
+                                </form>
+                                <span th:unless="${borrow.status.name() == 'ACTIVE'}" class="text-xs text-slate-400">Complete</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:unless="${recentBorrows != null and !recentBorrows.isEmpty()}" class="p-8 text-center text-slate-400 text-xs">
+                No borrow records found.
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+    <script th:inline="javascript">
+        /* Categories Doughnut Chart */
+        const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+        new Chart(ctxCategory, {
+            type: 'doughnut',
+            data: {
+                labels: ['Technology', 'Science', 'History', 'Fiction', 'Education'],
+                datasets: [{
+                    data: [3, 2, 1, 2, 2],
+                    backgroundColor: ['#3b82f6', '#6366f1', '#10b981', '#f59e0b', '#ec4899'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+                }
+            }
+        });
+
+        /* Circulation Bar Chart */
+        const ctxCirc = document.getElementById('circulationChart').getContext('2d');
+        const totalCopies = /*[[${stats.totalCopies}]]*/ 60;
+        const availableCopies = /*[[${stats.availableCopies}]]*/ 55;
+        const activeBorrows = /*[[${stats.activeBorrows}]]*/ 5;
+
+        new Chart(ctxCirc, {
+            type: 'bar',
+            data: {
+                labels: ['Total Stock', 'Available on Shelf', 'Currently Checked Out'],
+                datasets: [{
+                    label: 'Books',
+                    data: [totalCopies, availableCopies, activeBorrows],
+                    backgroundColor: ['#4f46e5', '#10b981', '#3b82f6'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

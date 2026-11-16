@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Borrow Transaction Master - LibraryHub')}"></head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Circulation Records</h1>
+                <p class="text-slate-500 text-sm mt-1">Audit trail of all student book borrowing and return activities</p>
+            </div>
+            <a href="/admin/dashboard" class="px-4 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-bold transition">
+                &larr; Admin Overview
+            </a>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600">
+                    <thead class="bg-slate-50 text-[11px] uppercase font-bold text-slate-400 tracking-wider border-b border-slate-100">
+                        <tr>
+                            <th class="px-6 py-4">Borrow ID</th>
+                            <th class="px-6 py-4">Student</th>
+                            <th class="px-6 py-4">Book Title</th>
+                            <th class="px-6 py-4">Borrow Date</th>
+                            <th class="px-6 py-4">Due Date</th>
+                            <th class="px-6 py-4">Return Date</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr th:each="borrow : ${borrows}" class="hover:bg-slate-50/80 transition">
+                            <td class="px-6 py-4 font-mono font-bold text-slate-400 text-xs" th:text="'#' + ${borrow.id}">#1</td>
+                            <td class="px-6 py-4">
+                                <div class="font-bold text-slate-900 text-xs sm:text-sm" th:text="${borrow.user.fullName}">Student Name</div>
+                                <div class="text-[10px] text-slate-400 font-mono" th:text="${borrow.user.username}">STU001</div>
+                            </td>
+                            <td class="px-6 py-4 font-medium text-slate-800 text-xs sm:text-sm" th:text="${borrow.book.title}">Book Title</td>
+                            <td class="px-6 py-4 text-xs text-slate-500" th:text="${#temporals.format(borrow.borrowDate, 'dd MMM yyyy, HH:mm')}">Date</td>
+                            <td class="px-6 py-4 text-xs font-bold" th:classappend="${borrow.isOverdue() ? 'text-rose-600' : 'text-slate-700'}" th:text="${borrow.dueDate}">Date</td>
+                            <td class="px-6 py-4 text-xs text-slate-500">
+                                <span th:if="${borrow.returnDate != null}" th:text="${#temporals.format(borrow.returnDate, 'dd MMM yyyy, HH:mm')}">Date</span>
+                                <span th:unless="${borrow.returnDate != null}" class="text-slate-400 italic">Pending</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span th:if="${borrow.status.name() == 'ACTIVE' and !borrow.isOverdue()}" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                    Active Loan
+                                </span>
+                                <span th:if="${borrow.status.name() == 'ACTIVE' and borrow.isOverdue()}" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                    Overdue Loan
+                                </span>
+                                <span th:if="${borrow.status.name() == 'RETURNED'}" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    Returned
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <form th:if="${borrow.status.name() == 'ACTIVE'}" th:action="@{'/admin/borrows/return/' + ${borrow.id}}" method="post">
+                                    <button type="submit" class="px-3 py-1 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 rounded-lg text-xs font-bold transition">
+                                        Mark Returned
+                                    </button>
+                                </form>
+                                <span th:unless="${borrow.status.name() == 'ACTIVE'}" class="text-emerald-500 text-xs font-semibold">
+                                    <i class="fa-solid fa-check-double mr-1"></i> Settled
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:unless="${borrows != null and !borrows.isEmpty()}" class="p-12 text-center text-slate-400">
+                <i class="fa-solid fa-receipt text-4xl mb-3"></i>
+                <p class="text-sm">No circulation records found.</p>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

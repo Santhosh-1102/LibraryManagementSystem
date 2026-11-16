@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Sign In - LibraryHub')}"></head>
+<body class="bg-gradient-to-tr from-slate-100 via-brand-50/30 to-indigo-50/40 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6 my-8">
+        <div class="w-full max-w-md bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200/80 p-8 sm:p-10 relative overflow-hidden">
+            <!-- Top Gradient Accent -->
+            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-brand-500 via-indigo-500 to-purple-500"></div>
+
+            <div class="text-center mb-8">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-500/30 text-2xl">
+                    <i class="fa-solid fa-book-open-reader"></i>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Welcome Back</h2>
+                <p class="text-slate-500 text-sm mt-1">Sign in to your LibraryHub account</p>
+            </div>
+
+            <!-- Alerts -->
+            <div th:if="${errorMessage}" class="p-4 mb-6 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center">
+                <i class="fa-solid fa-circle-exclamation text-rose-500 text-base mr-3"></i>
+                <span th:text="${errorMessage}">Invalid credentials</span>
+            </div>
+            <div th:if="${successMessage}" class="p-4 mb-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold flex items-center">
+                <i class="fa-solid fa-circle-check text-emerald-500 text-base mr-3"></i>
+                <span th:text="${successMessage}">Success action</span>
+            </div>
+
+            <!-- Login Form -->
+            <form th:action="@{/login}" method="post" class="space-y-5">
+                <div>
+                    <label for="username" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Username / Student ID</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-regular fa-user text-sm"></i>
+                        </div>
+                        <input type="text" id="username" name="username" required placeholder="e.g. admin or student1"
+                               class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-lock text-sm"></i>
+                        </div>
+                        <input type="password" id="password" name="password" required placeholder="Enter password"
+                               class="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none">
+                            <i id="eyeIcon" class="fa-regular fa-eye text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-brand-500/25 transition duration-200 text-sm">
+                    Sign In to Portal
+                </button>
+            </form>
+
+            <!-- Quick Demo Credentials Fill -->
+            <div class="mt-8 pt-6 border-t border-slate-100">
+                <span class="block text-center text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">One-Click Demo Fill</span>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="fillCredentials('admin', 'admin123')"
+                            class="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-user-shield text-xs"></i>
+                        <span>Admin Demo</span>
+                    </button>
+                    <button type="button" onclick="fillCredentials('student1', 'student123')"
+                            class="px-3 py-2 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-graduation-cap text-xs"></i>
+                        <span>Student Demo</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Footer link -->
+            <p class="text-center text-xs text-slate-500 mt-6">
+                Don't have a student account?
+                <a href="/register" class="font-bold text-brand-600 hover:underline">Register here</a>
+            </p>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+    <script>
+        function fillCredentials(u, p) {
+            document.getElementById('username').value = u;
+            document.getElementById('password').value = p;
+        }
+
+        function togglePasswordVisibility() {
+            const pass = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+            if (pass.type === 'password') {
+                pass.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                pass.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="header(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - LibraryHub'">LibraryHub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bae0fd',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Reusable Navbar -->
+    <nav th:fragment="navbar" class="sticky top-0 z-50 glass border-b border-slate-200/80 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3">
+                    <a href="/" class="flex items-center space-x-2 text-brand-600 font-extrabold text-xl tracking-tight">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                            <i class="fa-solid fa-book-open-reader text-lg"></i>
+                        </div>
+                        <span class="text-slate-900 font-bold">Library<span class="text-brand-600">Hub</span></span>
+                    </a>
+
+                    <!-- Nav Links -->
+                    <div class="hidden md:flex md:space-x-1 ml-6">
+                        <a href="/" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-slate-100 transition">Home</a>
+                        <a href="/catalog" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-slate-100 transition">Browse Catalog</a>
+                        
+                        <!-- Student Links -->
+                        <div sec:authorize="hasRole('ROLE_STUDENT')" class="flex space-x-1">
+                            <a href="/student/dashboard" class="px-3 py-2 rounded-lg text-sm font-medium text-brand-600 bg-brand-50 hover:bg-brand-100 transition">My Dashboard</a>
+                            <a href="/student/history" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-slate-100 transition">My Loans</a>
+                        </div>
+
+                        <!-- Admin Links -->
+                        <div sec:authorize="hasRole('ROLE_ADMIN')" class="flex space-x-1">
+                            <a href="/admin/dashboard" class="px-3 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition">Admin Dashboard</a>
+                            <a href="/admin/books" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition">Books</a>
+                            <a href="/admin/students" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition">Students</a>
+                            <a href="/admin/borrows" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition">Loan Records</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side Actions -->
+                <div class="flex items-center space-x-3">
+                    <!-- Guest -->
+                    <div sec:authorize="isAnonymous()" class="flex items-center space-x-2">
+                        <a href="/login" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-brand-600 transition">Sign In</a>
+                        <a href="/register" class="px-4 py-2 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-500/20 transition">Register</a>
+                    </div>
+
+                    <!-- Authenticated User Menu -->
+                    <div sec:authorize="isAuthenticated()" class="flex items-center space-x-3">
+                        <div class="hidden sm:flex flex-col text-right">
+                            <span class="text-xs font-semibold text-slate-900" sec:authentication="name">Username</span>
+                            <span class="text-[11px] font-medium text-slate-400 capitalize" sec:authorize="hasRole('ROLE_ADMIN')">Administrator</span>
+                            <span class="text-[11px] font-medium text-slate-400 capitalize" sec:authorize="hasRole('ROLE_STUDENT')">Student Member</span>
+                        </div>
+                        
+                        <!-- User Dropdown Toggle -->
+                        <div class="relative">
+                            <button id="userDropdownBtn" onclick="toggleUserDropdown(event)" type="button"
+                                    class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-200 hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500 transition shadow-xs">
+                                <i class="fa-regular fa-user text-sm"></i>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div id="userDropdownMenu" class="hidden absolute right-0 mt-1 w-52 bg-white rounded-2xl shadow-2xl border border-slate-200/80 py-2 z-50">
+                                <div class="px-4 py-2 border-b border-slate-100 mb-1">
+                                    <div class="text-xs font-bold text-slate-900" sec:authentication="name">Username</div>
+                                    <div class="text-[10px] text-slate-400" sec:authorize="hasRole('ROLE_STUDENT')">Student Portal</div>
+                                    <div class="text-[10px] text-indigo-500 font-semibold" sec:authorize="hasRole('ROLE_ADMIN')">Admin Console</div>
+                                </div>
+
+                                <a sec:authorize="hasRole('ROLE_STUDENT')" href="/student/dashboard" class="flex items-center px-4 py-2 text-xs font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-600 transition">
+                                    <i class="fa-solid fa-house w-4 mr-2.5 text-slate-400"></i> My Dashboard
+                                </a>
+                                <a sec:authorize="hasRole('ROLE_STUDENT')" href="/student/profile" class="flex items-center px-4 py-2 text-xs font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-600 transition">
+                                    <i class="fa-regular fa-id-card w-4 mr-2.5 text-slate-400"></i> Profile Details
+                                </a>
+                                <a sec:authorize="hasRole('ROLE_STUDENT')" href="/student/history" class="flex items-center px-4 py-2 text-xs font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-600 transition">
+                                    <i class="fa-solid fa-clock-rotate-left w-4 mr-2.5 text-slate-400"></i> Loan History
+                                </a>
+
+                                <a sec:authorize="hasRole('ROLE_ADMIN')" href="/admin/dashboard" class="flex items-center px-4 py-2 text-xs font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition">
+                                    <i class="fa-solid fa-chart-pie w-4 mr-2.5 text-slate-400"></i> Overview
+                                </a>
+                                <a sec:authorize="hasRole('ROLE_ADMIN')" href="/admin/books" class="flex items-center px-4 py-2 text-xs font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition">
+                                    <i class="fa-solid fa-book w-4 mr-2.5 text-slate-400"></i> Inventory
+                                </a>
+
+                                <div class="border-t border-slate-100 my-1.5"></div>
+
+                                <form th:action="@{/logout}" method="post" class="px-2">
+                                    <button type="submit" class="w-full text-left px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl flex items-center transition">
+                                        <i class="fa-solid fa-arrow-right-from-bracket w-4 mr-2 text-rose-500"></i> Log Out
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Direct Logout Button (Quick Action) -->
+                        <form th:action="@{/logout}" method="post" class="hidden sm:block">
+                            <button type="submit" title="Sign Out" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-500 flex items-center justify-center text-xs font-bold transition border border-slate-200">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Alerts and Flash Messages -->
+    <div th:fragment="alerts" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+        <div th:if="${successMessage}" class="flex items-center p-4 mb-4 text-emerald-800 rounded-xl bg-emerald-50 border border-emerald-200 shadow-sm" role="alert">
+            <i class="fa-solid fa-circle-check text-emerald-500 text-lg mr-3"></i>
+            <span class="text-sm font-medium" th:text="${successMessage}">Success operation</span>
+        </div>
+        <div th:if="${errorMessage}" class="flex items-center p-4 mb-4 text-rose-800 rounded-xl bg-rose-50 border border-rose-200 shadow-sm" role="alert">
+            <i class="fa-solid fa-triangle-exclamation text-rose-500 text-lg mr-3"></i>
+            <span class="text-sm font-medium" th:text="${errorMessage}">Error occurred</span>
+        </div>
+    </div>
+
+    <!-- Reusable Footer -->
+    <footer th:fragment="footer" class="mt-auto border-t border-slate-200 bg-white">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-book-bookmark text-brand-600 text-sm"></i>
+                <span class="font-semibold text-slate-700">LibraryHub Enterprise System</span>
+                <span>&bull; Powered by Spring Boot 3 &amp; Spring Security 6</span>
+            </div>
+            <div class="mt-4 sm:mt-0 flex space-x-6">
+                <a href="/catalog" class="hover:text-brand-600 transition">Catalog</a>
+                <a href="/login" class="hover:text-brand-600 transition">Portal</a>
+                <span class="text-slate-400">&copy; 2026 All Rights Reserved</span>
+            </div>
+        </div>
+
+        <script>
+            function toggleUserDropdown(event) {
+                if (event) event.stopPropagation();
+                const menu = document.getElementById('userDropdownMenu');
+                if (menu) {
+                    menu.classList.toggle('hidden');
+                }
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                const menu = document.getElementById('userDropdownMenu');
+                const btn = document.getElementById('userDropdownBtn');
+                if (menu && !menu.classList.contains('hidden')) {
+                    if (btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+                        menu.classList.add('hidden');
+                    }
+                }
+            });
+        </script>
+    </footer>
+</body>
+</html>

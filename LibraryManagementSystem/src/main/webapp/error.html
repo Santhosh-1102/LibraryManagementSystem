@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Error - Library Management System</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #ff758c, #ff7eb3);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #fff;
+    }
+
+    .error-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      animation: popIn 0.6s ease;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .error-box h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .error-box p {
+      font-size: 18px;
+      margin-bottom: 25px;
+    }
+
+    .error-box a {
+      display: inline-block;
+      padding: 12px 25px;
+      background: #fff;
+      color: #ff5e78;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .error-box a:hover {
+      background: #ff5e78;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="error-box">
+    <h1>Oops!</h1>
+    <p>Something went wrong.<br>The action could not be completed.</p>
+    <a href="AdminHome.jsp">Back to Admin Home</a>
+  </div>
+
+</body>
+</html>

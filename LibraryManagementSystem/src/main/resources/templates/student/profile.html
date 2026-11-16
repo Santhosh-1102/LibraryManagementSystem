@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('My Profile - LibraryHub')}"></head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xl p-8 sm:p-10">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center text-2xl font-bold shadow-md shadow-brand-500/20">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight" th:text="${student.fullName}">Student Name</h1>
+                    <p class="text-xs text-slate-500 font-mono" th:text="'Student ID: ' + ${student.username}">ID</p>
+                </div>
+            </div>
+
+            <form th:action="@{/student/profile}" method="post" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Student ID (Read-only)</label>
+                    <input type="text" th:value="${student.username}" readonly class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-100 text-slate-500 text-sm cursor-not-allowed">
+                </div>
+
+                <div>
+                    <label for="fullName" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Full Legal Name</label>
+                    <input type="text" id="fullName" name="fullName" th:value="${student.fullName}" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                </div>
+
+                <div>
+                    <label for="email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Email Address</label>
+                    <input type="email" id="email" name="email" th:value="${student.email}" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="phone" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Phone Number</label>
+                        <input type="text" id="phone" name="phone" th:value="${student.phone}" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                    </div>
+                    <div>
+                        <label for="age" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Age</label>
+                        <input type="number" id="age" name="age" th:value="${student.age}" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-500/20 transition text-sm">
+                        Save Profile Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

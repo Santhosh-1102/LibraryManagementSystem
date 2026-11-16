@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Student Members Directory - LibraryHub')}"></head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Registered Students</h1>
+                <p class="text-slate-500 text-sm mt-1">Directory of student accounts enrolled in the library system</p>
+            </div>
+            <a href="/admin/dashboard" class="px-4 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-bold transition">
+                &larr; Admin Overview
+            </a>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600">
+                    <thead class="bg-slate-50 text-[11px] uppercase font-bold text-slate-400 tracking-wider border-b border-slate-100">
+                        <tr>
+                            <th class="px-6 py-4">Student ID</th>
+                            <th class="px-6 py-4">Full Name</th>
+                            <th class="px-6 py-4">Email</th>
+                            <th class="px-6 py-4">Phone</th>
+                            <th class="px-6 py-4">Age</th>
+                            <th class="px-6 py-4">Enrolled On</th>
+                            <th class="px-6 py-4 text-right">Active Loans</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr th:each="student : ${students}" class="hover:bg-slate-50/80 transition">
+                            <td class="px-6 py-4 font-mono font-bold text-slate-900 text-xs" th:text="${student.username}">STU001</td>
+                            <td class="px-6 py-4 font-semibold text-slate-900 text-xs sm:text-sm" th:text="${student.fullName}">Name</td>
+                            <td class="px-6 py-4 text-xs text-slate-500" th:text="${student.email != null and !student.email.isEmpty() ? student.email : 'N/A'}">email</td>
+                            <td class="px-6 py-4 text-xs text-slate-500" th:text="${student.phone != null and !student.phone.isEmpty() ? student.phone : 'N/A'}">phone</td>
+                            <td class="px-6 py-4 text-xs text-slate-500" th:text="${student.age != null ? student.age : 'N/A'}">20</td>
+                            <td class="px-6 py-4 text-xs text-slate-400" th:text="${#temporals.format(student.createdAt, 'dd MMM yyyy')}">Date</td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-brand-50 text-brand-700 border border-brand-200"
+                                      th:text="${student.borrowRecords.?[status.name() == 'ACTIVE'].size()} + ' Active'">
+                                    0 Active
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:unless="${students != null and !students.isEmpty()}" class="p-12 text-center text-slate-400">
+                <i class="fa-solid fa-users text-4xl mb-3"></i>
+                <p class="text-sm">No students currently registered.</p>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

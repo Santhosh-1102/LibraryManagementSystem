@@ -1,0 +1,29 @@
+# Compiled class files & build artifacts
+**/target/
+*.class
+
+# Legacy standalone Tomcat & Eclipse Servers folder
+apache-tomcat-*/
+Servers/
+
+# Maven wrapper / Eclipse / IDE metadata
+.metadata/
+.settings/
+.project
+.classpath
+.idea/
+*.iml
+.vscode/
+
+# Local PostgreSQL Cluster data & logs
+pgdata/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Runtime uploads
+LibraryManagementSystem/uploads/*
+!LibraryManagementSystem/uploads/.gitkeep

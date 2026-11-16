@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: header('Book Catalog - LibraryHub')}"></head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+        <!-- Title and Search Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Library Repository</h1>
+                <p class="text-slate-500 text-sm mt-1">Explore available literary and technical collections</p>
+            </div>
+
+            <!-- Search Form -->
+            <form action="/catalog" method="get" class="flex items-center w-full md:w-96 bg-white border border-slate-200 rounded-xl px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-brand-500 transition">
+                <i class="fa-solid fa-magnifying-glass text-slate-400 mr-2 text-sm"></i>
+                <input type="text" name="search" th:value="${searchKeyword}" placeholder="Search books, authors, ISBN..."
+                       class="w-full bg-transparent border-0 text-sm focus:outline-none text-slate-800 placeholder-slate-400">
+                <button th:if="${searchKeyword != null and !searchKeyword.isEmpty()}" type="button" onclick="window.location.href='/catalog'" class="text-slate-400 hover:text-slate-600 ml-1">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
+            <a href="/catalog"
+               class="px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap"
+               th:classappend="${selectedCategory == 'All' and (searchKeyword == null or searchKeyword.isEmpty()) ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}">
+                All Collections
+            </a>
+            <a th:each="cat : ${categories}"
+               th:href="@{'/catalog?category=' + ${cat}}"
+               class="px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap"
+               th:classappend="${selectedCategory == cat ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}"
+               th:text="${cat}">
+                Category
+            </a>
+        </div>
+
+        <!-- Books Grid -->
+        <div th:if="${books != null and !books.isEmpty()}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div th:each="book : ${books}" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col overflow-hidden group">
+                <!-- Cover Image -->
+                <div class="h-60 bg-slate-100 overflow-hidden relative">
+                    <img th:if="${book.coverImageUrl != null and !book.coverImageUrl.isEmpty()}" th:src="${book.coverImageUrl}" th:alt="${book.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div th:unless="${book.coverImageUrl != null and !book.coverImageUrl.isEmpty()}" class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-tr from-slate-200 to-slate-100 text-slate-400">
+                        <i class="fa-solid fa-book-open text-5xl mb-2 text-slate-300"></i>
+                        <span class="text-xs font-semibold text-slate-500">LibraryHub Book</span>
+                    </div>
+                    <span class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide"
+                          th:classappend="${book.availableQuantity > 0 ? 'bg-emerald-500 text-white shadow-sm' : 'bg-rose-500 text-white shadow-sm'}">
+                        <span th:if="${book.availableQuantity > 0}" th:text="${book.availableQuantity} + ' Available'">Available</span>
+                        <span th:unless="${book.availableQuantity > 0}">All Borrowed</span>
+                    </span>
+                    <span class="absolute bottom-3 left-3 px-2.5 py-0.5 rounded-lg bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-medium" th:text="${book.category}">
+                        Category
+                    </span>
+                </div>
+
+                <!-- Book Info -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <span class="text-[11px] text-slate-400 font-mono mb-1" th:text="'ISBN: ' + ${book.isbn}">ISBN</span>
+                    <h3 class="font-bold text-slate-900 text-base line-clamp-1 group-hover:text-brand-600 transition" th:text="${book.title}">Title</h3>
+                    <p class="text-xs text-slate-500 mt-1 font-medium line-clamp-1" th:text="'By ' + ${book.author}">Author</p>
+                    <p class="text-xs text-slate-400 mt-2 line-clamp-2" th:text="${book.description}">Short summary...</p>
+
+                    <!-- Bottom Action Controls -->
+                    <div class="mt-auto pt-5 border-t border-slate-100 flex items-center justify-between">
+                        <a th:href="@{'/book/' + ${book.isbn}}" class="text-xs font-bold text-slate-600 hover:text-brand-600 flex items-center">
+                            <span>Details</span>
+                            <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i>
+                        </a>
+
+                        <!-- Student Borrow Button -->
+                        <div sec:authorize="hasRole('ROLE_STUDENT')">
+                            <form th:if="${book.availableQuantity > 0}" th:action="@{'/student/borrow/' + ${book.isbn}}" method="post">
+                                <button type="submit" class="text-xs px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold shadow-sm shadow-brand-500/20 transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus text-[10px]"></i>
+                                    <span>Borrow</span>
+                                </button>
+                            </form>
+                            <button th:unless="${book.availableQuantity > 0}" disabled class="text-xs px-4 py-2 bg-slate-100 text-slate-400 rounded-xl font-medium cursor-not-allowed">
+                                Unavailable
+                            </button>
+                        </div>
+
+                        <!-- Admin Manage Button -->
+                        <div sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a th:href="@{'/admin/books/edit/' + ${book.isbn}}" class="text-xs px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg font-semibold transition">
+                                Edit Book
+                            </a>
+                        </div>
+
+                        <!-- Guest Sign In to Borrow -->
+                        <div sec:authorize="isAnonymous()">
+                            <a href="/login" class="text-xs px-4 py-2 bg-slate-100 hover:bg-brand-50 hover:text-brand-600 text-slate-700 rounded-xl font-bold transition">
+                                Login to Borrow
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty Results Placeholder -->
+        <div th:unless="${books != null and !books.isEmpty()}" class="text-center py-20 bg-white rounded-3xl border border-slate-200">
+            <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-book-skull"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800">No books found</h3>
+            <p class="text-sm text-slate-500 mt-1">Try adjusting your search criteria or explore other categories.</p>
+            <a href="/catalog" class="mt-4 inline-block px-4 py-2 bg-brand-600 text-white text-xs font-semibold rounded-xl">Clear All Filters</a>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

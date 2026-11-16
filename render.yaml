@@ -1,0 +1,35 @@
+# Render Blueprint Specification (https://render.com)
+services:
+  - type: web
+    name: library-management-system
+    env: docker
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    branch: main
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 8085
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: library-postgres-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: library-postgres-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: library-postgres-db
+          property: password
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+
+databases:
+  - name: library-postgres-db
+    databaseName: LibraryManagementSystem
+    user: postgres
+    region: oregon
+    plan: free
