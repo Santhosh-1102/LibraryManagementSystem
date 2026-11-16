@@ -4,6 +4,7 @@ import com.library.entity.*;
 import com.library.repository.BookRepository;
 import com.library.repository.BorrowRecordRepository;
 import com.library.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,12 @@ public class DataInitializer implements CommandLineRunner {
     private final BorrowRecordRepository borrowRecordRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${app.admin.username:admin}")
+    private String adminUsername;
+
+    @Value("${app.admin.password:admin123}")
+    private String adminPassword;
+
     public DataInitializer(UserRepository userRepository,
                            BookRepository bookRepository,
                            BorrowRecordRepository borrowRecordRepository,
@@ -32,10 +39,10 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // 1. Seed Admin
-        if (userRepository.findByUsername("admin").isEmpty()) {
+        if (userRepository.findByUsername(adminUsername).isEmpty()) {
             User admin = new User(
-                    "admin",
-                    passwordEncoder.encode("admin123"),
+                    adminUsername,
+                    passwordEncoder.encode(adminPassword),
                     "Chief Librarian Admin",
                     "admin@library.com",
                     "9876543210",
@@ -43,13 +50,13 @@ public class DataInitializer implements CommandLineRunner {
                     Role.ROLE_ADMIN
             );
             userRepository.save(admin);
-            System.out.println(">>> Initialized default Admin user: admin / admin123");
+            System.out.println(">>> Initialized system administrator account: " + adminUsername);
         }
 
         // 2. Seed Sample Students
         User student1 = null;
         if (userRepository.findByUsername("student1").isEmpty()) {
-            student1 = new User(
+            User demoStudent = new User(
                     "student1",
                     passwordEncoder.encode("student123"),
                     "Santhosh Kumar",
@@ -58,8 +65,8 @@ public class DataInitializer implements CommandLineRunner {
                     21,
                     Role.ROLE_STUDENT
             );
-            student1 = userRepository.save(student1);
-            System.out.println(">>> Initialized default Student user: student1 / student123");
+            student1 = userRepository.save(demoStudent);
+            System.out.println(">>> Initialized initial demonstration student member.");
         } else {
             student1 = userRepository.findByUsername("student1").get();
         }
