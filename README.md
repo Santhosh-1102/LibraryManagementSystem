@@ -55,11 +55,47 @@ You can log in immediately using the one-click demo credentials provided on the 
 - **Language**: Java 21 LTS
 - **Database**: PostgreSQL 18
 - **Frontend**: Thymeleaf, Tailwind CSS, FontAwesome 6, Chart.js
-- **Server**: Embedded Apache Tomcat (Port 8080)
+- **Server**: Embedded Apache Tomcat (Port 8085)
 
 ---
 
-## 💻 Manual Commands
+## ☁️ Cloud Hosting & Deployment Guide
+
+This project is fully containerized and cloud-ready with multi-stage `Dockerfile`, `docker-compose.yml`, and `render.yaml`.
+
+### Option A: Free Cloud Deployment on Render.com (Recommended)
+1. **Push to GitHub**:
+   ```bash
+   git remote add origin https://github.com/<your-username>/<your-repo-name>.git
+   git branch -M main
+   git push -u origin main
+   ```
+2. **Deploy on Render**:
+   - Sign up / Log into [Render.com](https://render.com) with GitHub.
+   - Click **New +** -> **Blueprint**.
+   - Select your repository.
+   - Render will automatically read `render.yaml`, provision a free PostgreSQL database, build the Docker container, and host your site on a public HTTPS URL (e.g. `https://library-management-system.onrender.com`).
+
+---
+
+### Option B: Deploy on Railway.app
+1. Push your repository to GitHub.
+2. Go to [Railway.app](https://railway.app) and click **New Project** -> **Deploy from GitHub repo**.
+3. Click **+ Add Database** -> **PostgreSQL**.
+4. Railway will automatically link the database environment variables, build the Docker image, and generate a live public URL.
+
+---
+
+### Option C: Run Anywhere with Docker Compose
+If you or anyone else wants to run both the Spring Boot app and the PostgreSQL database on any VPS (AWS EC2, DigitalOcean, Hetzner, or local machine) with a single command:
+```bash
+docker compose up -d
+```
+The entire application with database will automatically start on `http://localhost:8085`.
+
+---
+
+## 💻 Manual Local Commands
 
 ### Build from source:
 ```powershell
