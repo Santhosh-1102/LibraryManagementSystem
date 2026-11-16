@@ -12,10 +12,18 @@ services:
     envVars:
       - key: PORT
         value: 8085
-      - key: SPRING_DATASOURCE_URL
+      - key: DB_HOST
         fromDatabase:
           name: library-postgres-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: library-postgres-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: library-postgres-db
+          property: database
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: library-postgres-db
@@ -29,7 +37,7 @@ services:
 
 databases:
   - name: library-postgres-db
-    databaseName: LibraryManagementSystem
-    user: postgres
+    databaseName: library_db
+    user: library_user
     region: oregon
     plan: free
