@@ -1,0 +1,170 @@
+%-------------------------
+% Resume in LaTeX
+% Author : Santhosh N
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,10pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1.0in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-5pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-4pt}]
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.15in]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-4pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    \textbf{\Huge \scshape Santhosh N} \\ \vspace{2pt}
+    \small +91 90190 86203 $|$ \href{mailto:shanthashantha1102@gmail.com}{\underline{shanthashantha1102@gmail.com}} $|$ 
+    \href{https://linkedin.com/in/santhosh1102}{\underline{linkedin.com/in/santhosh1102}} $|$
+    \href{https://github.com/Santhosh-1102}{\underline{github.com/Santhosh-1102}} \\
+    \small Davanagere, Karnataka, India
+\end{center}
+
+%-----------SUMMARY-----------
+\section{Summary}
+\small{
+Results-driven Java Backend Developer and BCA graduate with hands-on expertise building, testing, and deploying scalable web application systems and RESTful APIs across the full SDLC. Demonstrates strong customer focus and intellectual curiosity by translating user requirements into secure, high-availability solutions using Spring Boot 3, PostgreSQL, Docker, and AWS. Proven track record in Agile software development, automated software testing (JUnit 5, Selenium, TestNG), and continuous improvement through collaborative code reviews and structured defect tracking. Driven by a passion for innovation to deliver resilient, data-driven software that enhances user experience.
+}
+
+%-----------TECHNICAL SKILLS-----------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: Java (Java 8/17/21, OOP, Collections), Python, JavaScript (ES6+), SQL, C\# / .NET fundamentals, HTML5, CSS3} \\
+     \textbf{Frameworks \& Architecture}{: Spring Boot 3, Spring MVC, Spring Security 6, Spring Data JPA, Hibernate, Thymeleaf, Tailwind CSS, React.js, Microservices, MVC} \\
+     \textbf{Databases \& Systems}{: PostgreSQL (Cloud \& Local), MySQL, Web-enabled data collection systems, Relational Schema Design, Query Optimization} \\
+     \textbf{Software Testing \& Quality}{: Software testing (Unit, Integration, Regression, Smoke), Selenium WebDriver, TestNG, JUnit 5, Postman API Testing, Code reviews} \\
+     \textbf{DevOps \& Cloud Tools}{: Docker Containerization, Git, GitHub, Render Cloud, CI/CD Pipelines (Jenkins), AWS (EC2, S3 – Cloud Practitioner Certified), Linux, Maven} \\
+     \textbf{Core Competencies}{: Customer focus, Problem solving, Continuous improvement, Intellectual curiosity, Passion for innovation, Agile software development}
+    }}
+ \end{itemize}
+
+%-----------EXPERIENCE-----------
+\section{Professional Experience}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Innovant IT Solutions (IITS)}{Mar 2024 -- Jun 2024}
+      {Java Developer Intern}{Shimogga, Karnataka}
+      \resumeItemListStart
+        \resumeItem{Engineered modular Java backend components alongside senior developers, increasing code reusability by 35\% across core modules through reusable service abstractions and OOP design patterns.}
+        \resumeItem{Enforced coding standards across the full SDLC and participated in Agile code reviews, uncovering 20+ defects pre-release and cutting regression defects by 25\%.}
+        \resumeItem{Demonstrated customer focus and problem solving by diagnosing API connectivity issues via structured log analysis, reducing response latency by 18\%.}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+%-----------PROJECTS-----------
+\section{Projects}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+          {\textbf{Enterprise Library Management System (LibraryHub)} $|$ \emph{Java 21, Spring Boot 3, Spring Security 6, PostgreSQL, Docker, Thymeleaf, Tailwind}}{Aug 2024 -- Oct 2024}
+          \resumeItemListStart
+            \resumeItem{\href{https://library-management-system-thuw.onrender.com}{\underline{Live Demo}} $|$ \href{https://github.com/Santhosh-1102/LibraryManagementSystem}{\underline{GitHub Repository}}}
+            \resumeItem{Architected and deployed a cloud-hosted web-enabled data collection and circulation system serving 24+ catalog titles and 8+ member accounts, achieving sub-200ms API response times.}
+            \resumeItem{Implemented zero-trust security with Spring Security 6 and BCrypt password encryption, enforcing strict Role-Based Access Control (ROLE\_ADMIN, ROLE\_STUDENT) and CSRF protection to eliminate unauthorized data access.}
+            \resumeItem{Engineered an automated circulation engine featuring 1-click checkout, 14-day return countdowns, student borrowing quotas, and Chart.js telemetry, reducing manual book tracking effort by 70\%.}
+            \resumeItem{Containerized the application using multi-stage Docker builds (reducing image footprint by 45\%) and established an automated CI/CD pipeline on Render Cloud with managed PostgreSQL.}
+          \resumeItemListEnd
+
+      \resumeProjectHeading
+          {\textbf{Delivery Management Backend} $|$ \emph{Spring Boot, Spring Security, PostgreSQL, Feign Client, Selenium, TestNG}}{May 2024 -- Jul 2024}
+          \resumeItemListStart
+            \resumeItem{Architected a microservices backend spanning 3 decoupled services (Restaurant, Order, Delivery) communicating synchronously via Feign Client REST APIs with 99.8\% uptime reliability.}
+            \resumeItem{Automated software testing by authoring 40+ UI and integration test cases using Selenium WebDriver and TestNG, decreasing regression testing cycle time by 50\%.}
+            \resumeItem{Diagnosed local network and service-to-service communication bottlenecks using log inspection and REST API specifications, improving inter-service throughput by 25\%.}
+          \resumeItemListEnd
+
+      \resumeProjectHeading
+          {\textbf{Banking Portal API} $|$ \emph{Java, Spring Boot, Spring Security, JWT, Spring Data JPA, MySQL, Maven, Swagger}}{Jan 2024 -- Mar 2024}
+          \resumeItemListStart
+            \resumeItem{Developed a secure RESTful Banking Portal API supporting 5+ financial transaction workflows (deposits, transfers, balance auditing) with JWT authentication and role-based authorization.}
+            \resumeItem{Designed normalized relational database entities with Spring Data JPA/Hibernate, accelerating query execution by 30\% through indexed lookups, and documented endpoints using OpenAPI/Swagger.}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Government First Grade College, Shimogga}{Jul 2021 -- Jul 2024}
+      {Bachelor of Computer Applications (BCA) -- CGPA: 7.2 / 10.0}{Shimogga, Karnataka}
+      \small{\item{\textit{Relevant Coursework: Computer Networks, Operating Systems, DBMS, DSA, Software Engineering}}}
+    \resumeSubheading
+      {Moorarji Desai Residential Science PU College, Davanagere}{Jun 2019 -- May 2021}
+      {Pre-University Course (PUC) -- Science -- 82\%}{Davanagere, Karnataka}
+  \resumeSubHeadingListEnd
+
+%-----------CERTIFICATIONS-----------
+\section{Certifications \& Achievements}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Java \& Spring Boot Training}{: Comprehensive training in Core Java, OOP, Collections Framework, and Spring Boot at Innovant IT Solutions (IITS); self-directed study of CI/CD pipeline setup (Jenkins) and basic Python scripting.} \\
+     \textbf{AWS Cloud Practitioner Essentials}{: Mastered core cloud infrastructure (EC2, S3, IAM), deployment models, and CI/CD pipelines, reflecting intellectual curiosity and continuous improvement.} \\
+     \textbf{Microservices Architecture (Self-Directed)}{: Independently designed, built, and shipped a multi-service backend platform covering inter-service communication (Feign Client), JWT-secured APIs, and domain-driven service boundaries.}
+    }}
+ \end{itemize}
+
+\end{document}
